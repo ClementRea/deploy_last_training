@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2026-02-01
+
+### 🐛 Bug Fixes
+
+- Get firstname not username from backend
+
+### Version
+
+- 1.0.1
+
 ## [1.0.1] - 2026-02-01
 
 ### 🐛 Bug Fixes
