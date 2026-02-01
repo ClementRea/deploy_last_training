@@ -15,14 +15,17 @@ class HabitRepository extends AbstractRepository
 
     public function find(int $id)
     {
-        $habit = $this->getConnection()->query("SELECT * FROM habits WHERE id = $id");
+        $sql = "SELECT * FROM habits WHERE id = :id";
+        $stmt = $this->getConnection()->prepare($sql);
+        $stmt->execute(['id' => $id]);
         return EntityMapper::map(Habit::class, $habit->fetch());
     }
 
     public function findByUser(int $userId)
     {
-        $sql = "SELECT * FROM habits WHERE user_id = $userId";
-        $query = $this->getConnection()->query($sql);
+        $sql = "SELECT * FROM habits WHERE user_id = :user_id";
+        $query = $this->getConnection()->prepare($sql);
+        $query->execute(['user_id' => $user_id]);
         return EntityMapper::mapCollection(Habit::class, $query->fetchAll());
     }
 
@@ -31,7 +34,8 @@ class HabitRepository extends AbstractRepository
      */
     public function countByUser(int $userId): int
     {
-        $stmt = $this->getConnection()->prepare("SELECT COUNT(*) as total FROM habits WHERE user_id = :user_id");
+        $sql = "SELECT COUNT(*) as total FROM habits WHERE user_id = :user_id";
+        $stmt = $this->getConnection()->prepare($sql);
         $stmt->execute(['user_id' => $userId]);
         $row = $stmt->fetch();
         return (int)($row['total'] ?? 0);
@@ -43,12 +47,15 @@ class HabitRepository extends AbstractRepository
         $description = $data['description'];
 
         // Requête construite par concaténation (vulnérable)
-        $sql = "INSERT INTO habits (user_id, name, description, created_at) VALUES (" 
-            . $data['user_id'] . ", '" 
-            . $name . "', '" 
-            . $description . "', NOW())";
+        $sql = "INSERT INTO habits (user_id, name, description, created_at) VALUES (:user_id, :name, :description, NOW())";
 
-        $query = $this->getConnection()->query($sql);
+        $query = $this->getConnection()->prepare($sql);
+        $query->execute([
+            'user_id' => $data['user_id'],
+            'name' => $data['name'],
+            'description' => $data['description'],
+            'created_at' => $data['created_at']
+        ]);
 
         return $this->getConnection()->lastInsertId();
     }
