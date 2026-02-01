@@ -45,7 +45,7 @@ class RegisterController extends AbstractController
                 // On authentifie l'utilsateur directement
                 $_SESSION['user'] = [
                     'id' => $id,
-                    'username' => $user['firstname']
+                    'firstname' => $user['firstname']
                 ];
 
                 // On redirige vers son dashboard
